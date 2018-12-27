@@ -65,11 +65,14 @@ set(handles.axes1,'CameraPosition',...
     [0 1 0],'DataAspectRatio',...
     [1 1 1]);
 
-set(handles.axes1,'xlim',[-3 3],'ylim',[-3 3],'visible','off','color','none');
+%set(handles.axes1,'xlim',[-3 3],'ylim',[-3 3],'visible','off','color','none');
 
 % Choose default command line output for trackBall
 handles.output = hObject;
 
+% Custom values
+handles.clickX = 0;
+handles.clickY = 0;
 
 % Update handles structure
 guidata(hObject, handles);
@@ -96,10 +99,11 @@ ylim = get(handles.axes1,'ylim');
 mousepos=get(handles.axes1,'CurrentPoint');
 xmouse = mousepos(1,1);
 ymouse = mousepos(1,2);
-
 if xmouse > xlim(1) && xmouse < xlim(2) && ymouse > ylim(1) && ymouse < ylim(2)
     set(handles.figure1,'WindowButtonMotionFcn',{@my_MouseMoveFcn,hObject});
 end
+handles.clickX = xmouse;
+handles.clickY = ymouse;
 guidata(hObject,handles)
 
 function my_MouseReleaseFcn(obj,event,hObject)
@@ -107,24 +111,50 @@ handles=guidata(hObject);
 set(handles.figure1,'WindowButtonMotionFcn','');
 guidata(hObject,handles);
 
+
+
 function my_MouseMoveFcn(obj,event,hObject)
 handles=guidata(obj);
 r = norm([1;1;1]);
 xlim = get(handles.axes1,'xlim');
 ylim = get(handles.axes1,'ylim');
 mousepos=get(handles.axes1,'CurrentPoint');
-xmouse = mousepos(1,1);
-ymouse = mousepos(1,2);
+xmouse = mousepos(1,1)
+ymouse = mousepos(1,2)
+r=1;
 
-% if xmouse^2 + ymouse^2 < 0.5 * r^2
-%     
-% end
 
 if xmouse > xlim(1) && xmouse < xlim(2) && ymouse > ylim(1) && ymouse < ylim(2)
-    %%% DO things
-    % use with the proper R matrix to rotate the cube
-    R = [1 0 0; 0 -1 0;0 0 -1];
-    handles.Cube = RedrawCube(R,handles.Cube);
+             %Click down vec 
+            cd_X = handles.clickX
+             cd_Y = handles.clickY
+              
+                if((cd_X^2 + cd_Y^2) < 0.5*r^2 )
+                    cd_Z= sqrt(r^2-cd_X^2-cd_Y^2);
+                    cdVec = [cd_X,cd_Y,cd_Z];
+                end
+                 if(cd_X^2 + cd_Y^2 >= 0.5*r^2 )
+                     cdVec= [cd_X,cd_Y,(r^2)/(2*sqrt(cd_X^2+cd_Y^2))]';
+                     m=norm(cdVec);
+                    cdVec= (r* cdVec)/m;
+                 end
+              %Mo
+                if(xmouseM^2 + ymouseM^2 < 0.5*r^2 )
+                    zmouse= sqrt(r^2-xmouseM^2-ymouseM^2);
+                    mVec = [xmouseM,ymouseM,zmouse]';
+                end
+                 if(xmouseM^2 + ymouseM^2 >= 0.5*r^2 )
+                     mVec= [xmouseM,ymouseM,(r^2)/(2*sqrt(xmouseM^2+ymouseM^2))]';
+                     m=norm(mVec);
+                    mVec= (r* mVec)/m;
+                 end   
+
+                 N = cross(mVec,cdVec);
+                 angle = acosd((mVec'*cdVec)/norm(mVec)*norm(cdVec));
+                 Rm = VecAng2rotMat(N,angle)
+
+            R = [1 0 0; 0 -1 0;0 0 -1];
+            handles.Cube = RedrawCube(Rm,handles.Cube);
 end
 guidata(hObject,handles);
 

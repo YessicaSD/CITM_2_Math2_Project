@@ -111,24 +111,48 @@ handles=guidata(hObject);
 set(handles.figure1,'WindowButtonMotionFcn','');
 guidata(hObject,handles);
 
+
+
 function my_MouseMoveFcn(obj,event,hObject)
 handles=guidata(obj);
 r = norm([1;1;1]);
 xlim = get(handles.axes1,'xlim');
 ylim = get(handles.axes1,'ylim');
 mousepos=get(handles.axes1,'CurrentPoint');
-xmouse = mousepos(1,1);
-ymouse = mousepos(1,2);
+xmouse = mousepos(1,1)
+ymouse = mousepos(1,2)
+r=1;
 
-% if xmouse^2 + ymouse^2 < 0.5 * r^2
-%     
-% end
 
 if xmouse > xlim(1) && xmouse < xlim(2) && ymouse > ylim(1) && ymouse < ylim(2)
-    %%% DO things
-    % use with the proper R matrix to rotate the cube
-    R = [1 0 0; 0 -1 0;0 0 -1];
-    handles.Cube = RedrawCube(R,handles.Cube);
+             %Click down vec 
+            cd_X = handles.clickX
+             cd_Y = handles.clickY
+              
+                if((cd_X^2 + cd_Y^2) < 0.5*r^2 )
+                    cd_Z= sqrt(r^2-cd_X^2-cd_Y^2);
+                    cdVec = [cd_X,cd_Y,cd_Z]';
+                end
+                 if(cd_X^2 + cd_Y^2 >= 0.5*r^2 )
+                     cdVec= [cd_X,cd_Y,(r^2)/(2*sqrt(cd_X^2+cd_Y^2))]';
+                     m=norm(cdVec);
+                    cdVec= (r* cdVec)/m;
+                 end
+              %Move Vec
+                if(xmouse^2 + ymouse^2 < 0.5*r^2 )
+                    zmouse= sqrt(r^2-xmouse^2-ymouse^2);
+                    mVec = [xmouse,ymouse,zmouse]';
+                end
+                 if(xmouse^2 + ymouse^2 >= 0.5*r^2 )
+                     mVec= [xmouse,ymouse,(r^2)/(2*sqrt(xmouse^2+ymouse^2))]';
+                     m=norm(mVec);
+                    mVec= (r* mVec)/m;
+                 end   
+
+                 N = cross(mVec,cdVec);
+                 angle = acosd((mVec'*cdVec)/(norm(mVec)*norm(cdVec)));
+                 R = VecAng2rotMat(N,angle)
+            handles.Cube = RedrawCube(R,handles);
 end
 guidata(hObject,handles);
 
