@@ -107,13 +107,16 @@ set(handles.figure1,'WindowButtonMotionFcn','');
 guidata(hObject,handles);
 
 function my_MouseMoveFcn(obj,event,hObject)
-
 handles=guidata(obj);
+r = norm([1;1;1]);
 xlim = get(handles.axes1,'xlim');
 ylim = get(handles.axes1,'ylim');
 mousepos=get(handles.axes1,'CurrentPoint');
-xmouse = mousepos(1,1);
-ymouse = mousepos(1,2);
+xmouse = mousepos(1,1)
+ymouse = mousepos(1,2)
+% if xmouse^2 + ymouse^2 < 0.5 * r^2
+%     
+% end
 
 if xmouse > xlim(1) && xmouse < xlim(2) && ymouse > ylim(1) && ymouse < ylim(2)
     %%% DO things
