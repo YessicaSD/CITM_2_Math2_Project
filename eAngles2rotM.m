@@ -1,6 +1,7 @@
 function [rotationMatrix] = eAngles2rotM(alpha,teta,phi)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
+% Angle must be in degrees
 cosAlpha=cosd(alpha);
 sinAlpha = sind(alpha);
 cosTeta=cosd(teta);

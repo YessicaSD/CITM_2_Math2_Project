@@ -1,6 +1,7 @@
 function  [RotationMatrix] = VecAng2rotMat(vectorU,angleD)
 %VecAng2rotMat Returns a rotation matrix specifiying the euler principal
 %axis and angle
+% Angle must be in degrees
 
 if(norm(vectorU)~= 1)
     vectorU = (vectorU/norm(vectorU));
