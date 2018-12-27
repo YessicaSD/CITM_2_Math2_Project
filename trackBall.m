@@ -234,7 +234,11 @@ function push_ea_Callback(hObject, eventdata, handles)
 % hObject    handle to push_ea (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
+phi   = str2double(get(handles.phi,   'String'));
+theta = str2double(get(handles.theta, 'String'));
+psi   = str2double(get(handles.psi,   'String'));
+R = eAngles2rotM(phi, theta, psi);
+handles.Cube = RedrawCube(R, handles);
 
 % --- Executes on button press in push_epaa.
 function push_epaa_Callback(hObject, eventdata, handles)
@@ -245,8 +249,8 @@ angle = str2double(get(handles.angle, 'String'));
 vec =  [str2double(get(handles.axisX, 'String'));
         str2double(get(handles.axisY, 'String'));
         str2double(get(handles.axisZ, 'String'))];
-rMat = VecAng2rotMat(vec, angle);
-handles.Cube = RedrawCube(rMat, handles);
+R = VecAng2rotMat(vec, angle);
+handles.Cube = RedrawCube(R, handles);
 
 % --- Executes on button press in push_quat.
 function push_quat_Callback(hObject, eventdata, handles)
@@ -259,8 +263,8 @@ q =  [str2double(get(handles.q_1, 'String'));
       str2double(get(handles.q_3, 'String'));
       str2double(get(handles.q_4, 'String'))];
 if norm(q) ~= 0
-    rMat = Quat2Mat(q);
-    handles.Cube = RedrawCube(rMat, handles);
+    R = Quat2Mat(q);
+    handles.Cube = RedrawCube(R, handles);
 end
 
 function q_1_Callback(hObject, eventdata, handles)
