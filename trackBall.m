@@ -214,7 +214,16 @@ UpdateRotations(R, handles);
 
 % - Updates all the rotation parameters
 function UpdateRotations(R, handles)
-
+% Matrix
+set(handles.r_11, 'String', num2str(R(1,1)));
+set(handles.r_12, 'String', num2str(R(1,2)));
+set(handles.r_13, 'String', num2str(R(1,3)));
+set(handles.r_21, 'String', num2str(R(2,1)));
+set(handles.r_22, 'String', num2str(R(2,2)));
+set(handles.r_23, 'String', num2str(R(2,3)));
+set(handles.r_31, 'String', num2str(R(3,1)));
+set(handles.r_32, 'String', num2str(R(3,2)));
+set(handles.r_33, 'String', num2str(R(3,3)));
 
 % Angle and u vector
 [ang,vec]=rotMat2Eaa(R);
@@ -229,69 +238,32 @@ set(handles.v_2, 'String', num2str(rotVec(2)));
 set(handles.v_3, 'String', num2str(rotVec(3)));
 
 %Quaternion 
-
-% if R(3,3)< 0
-%     if R(1,1) > R(2,2)
-%         t = 1 + R(1,1) - R(2,2) - R(3,3);
-%         q = [ t ; R(1,2) + R(2,1) ; R(3,1) + R(1,3); R(2,3) - R(3,2)];
-%     else
-%         t = 1 - R(1,1) + R(2,2) - R(3,3);
-%         q = [ R(1,2) + R(2,1) ; t ; R(2,3) + R(3,2); R(3,1) - R(1,3)];
-%     end
-% else
-%     if R(1,1) < -R(2,2)
-%         t = 1 - R(1,1) - R(2,2) + R(3,3);
-%         q = [ R(3,1) + R(1,3) ; R(2,3) + R(3,2); t ; R(1,2) - R(2,1)];
-%     else
-%         t = 1 + R(1,1) + R(2,2) + R(3,3);
-%         q = [ R(2,3) - R(3,2) ; R(3,1) - R(1,3); R(1,2) - R(2,1); t];
-%     end
-% end
-% 
-% q = q *(0.5 / sqrt(t));
-
-
 tr = R(1,1) + R(2,2) + R(3,3);
-
 if tr > 0
-    
     s = sqrt(tr + 1) * 2;
-    
     q = [               0.25 * s ; 
          ( R(3,2) - R(2,3) ) / s ; 
          ( R(1,3) - R(3,1) ) / s ; 
          ( R(2,1) - R(1,2) ) / s ];
-
 elseif R(1,1) > R(2,2) && R(1,1) > R(3,3)  
-    
-    s = sqrt(1 + R(1,1) - R(2,2) - R(3,3) ) * 2;
-        
+    s = sqrt(1 + R(1,1) - R(2,2) - R(3,3) ) * 2;  
     q = [( R(3,2) - R(2,3) ) / s ; 
                         0.25 * s ; 
          ( R(1,2) + R(2,1) ) / s ; 
          ( R(1,3) + R(3,1) ) / s ];
-     
  elseif R(2,2) > R(3,3)  
-     
     s = sqrt(1 + R(2,2) - R(1,1) - R(3,3) ) * 2;
-        
     q = [( R(1,3) - R(3,1) ) / s ; 
          ( R(1,2) + R(2,1) ) / s ; 
                         0.25 * s ; 
          ( R(2,3) + R(3,2) ) / s ];
-     
- else
-     
+else
     s = sqrt(1 + R(3,3) - R(1,1) - R(2,2) ) * 2;
-        
     q = [( R(2,1) - R(1,2) ) / s ; 
          ( R(1,3) + R(3,1) ) / s ; 
          ( R(2,3) + R(3,2) ) / s ;
                         0.25 * s ]; 
 end
-
-
-
 set(handles.q_1, 'String', num2str(q(1)));
 set(handles.q_2, 'String', num2str(q(2)));
 set(handles.q_3, 'String', num2str(q(3)));
@@ -302,16 +274,6 @@ set(handles.q_4, 'String', num2str(q(4)));
 set(handles.phi, 'String', num2str(phi));
 set(handles.theta, 'String', num2str(theta));
 set(handles.psi, 'String', num2str(psi));
-% Matrix
-set(handles.r_11, 'String', num2str(R(1,1)));
-set(handles.r_12, 'String', num2str(R(1,2)));
-set(handles.r_13, 'String', num2str(R(1,3)));
-set(handles.r_21, 'String', num2str(R(2,1)));
-set(handles.r_22, 'String', num2str(R(2,2)));
-set(handles.r_23, 'String', num2str(R(2,3)));
-set(handles.r_31, 'String', num2str(R(3,1)));
-set(handles.r_32, 'String', num2str(R(3,2)));
-set(handles.r_33, 'String', num2str(R(3,3)));
 
 % --- Executes on button press in push_rv.
 function push_rv_Callback(hObject, eventdata, handles)

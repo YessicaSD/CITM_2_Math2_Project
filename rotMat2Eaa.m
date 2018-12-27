@@ -5,6 +5,11 @@ VectorU=zeros(3,1);
 VectorU(1)= Ux(3,2);
 VectorU(2)= Ux(1,3);
 VectorU(3)= Ux(2,1);
-VectorU = VectorU / norm(VectorU);
+if norm(VectorU) == 0
+    VectorU = [0;0;0];
+else
+    VectorU = VectorU / norm(VectorU);
+end
+
 end
 
