@@ -246,7 +246,8 @@ q =  [str2double(get(handles.q_2, 'String'));
 stoich = [    0, - q(3),  q(2);
            q(3),      0, -q(1);
           -q(2),   q(1),     0];
-rMat = (q_0.^ 2 - q' * q) * eye(3) + 2 * (q * q') + 2 * q_0 * stoich;
+rMat = (q_0^2 - q' * q) * eye(3) + 2 * (q * q') + 2 * q_0 * stoich;
+%handles.Cube = DrawCube(rMat);
 handles.Cube = RedrawCube(rMat, handles.Cube);
 
 function q_1_Callback(hObject, eventdata, handles)
