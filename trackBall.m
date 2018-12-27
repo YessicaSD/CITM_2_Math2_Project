@@ -57,7 +57,7 @@ set(hObject,'WindowButtonDownFcn',{@my_MouseClickFcn,handles.axes1});
 set(hObject,'WindowButtonUpFcn',{@my_MouseReleaseFcn,handles.axes1});
 axes(handles.axes1);
 
-handles.Cube=DrawCube(eye(3));
+handles.Cube=DrawCube(eye(3), handles);
 
 set(handles.axes1,'CameraPosition',...
     [0 0 5],'CameraTarget',...
@@ -126,7 +126,7 @@ if xmouse > xlim(1) && xmouse < xlim(2) && ymouse > ylim(1) && ymouse < ylim(2)
 end
 guidata(hObject,handles);
 
-function h = DrawCube(R)
+function h = DrawCube(R, handles)
 
 M0 = [    -1  -1 1;   %Node 1
     -1   1 1;   %Node 2
@@ -168,6 +168,7 @@ h = fill3(x,y,z, 1:6);
 for q = 1:length(c)
     h(q).FaceColor = c(q,:);
 end
+UpdateRotations(eye(3), handles);
 
 function h = RedrawCube(R,handles)
 
@@ -209,7 +210,6 @@ for q = 1:6
     h(q).Vertices = [x(:,q) y(:,q) z(:,q)];
     h(q).FaceColor = c(q,:);
 end
-
 UpdateRotations(R, handles);
 
 % - Updates all the rotation parameters
