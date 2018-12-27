@@ -259,11 +259,7 @@ q =  [str2double(get(handles.q_1, 'String'));
       str2double(get(handles.q_3, 'String'));
       str2double(get(handles.q_4, 'String'))];
 if norm(q) ~= 0
-    q = q/norm(q);
-    stoich = [    0, - q(4),  q(3);
-               q(4),      0, -q(2);
-              -q(3),   q(2),     0];
-    rMat = (q(1)^2 - q(2:4)' * q(2:4)) * eye(3) + 2 * (q(2:4) * q(2:4)') + 2 * q(1) * stoich;
+    rMat = Quat2Mat(q);
     handles.Cube = RedrawCube(rMat, handles);
 end
 

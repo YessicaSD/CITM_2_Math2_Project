@@ -97,7 +97,6 @@ xmouse = mousepos(1,1);
 ymouse = mousepos(1,2);
 
 if xmouse > xlim(1) && xmouse < xlim(2) && ymouse > ylim(1) && ymouse < ylim(2)
-
     set(handles.figure1,'WindowButtonMotionFcn',{@my_MouseMoveFcn,hObject});
 end
 guidata(hObject,handles)
@@ -188,11 +187,9 @@ M0 = [    -1  -1 1;   %Node 1
 
 M = (R*M0')';
 
-
 x = M(:,1);
 y = M(:,2);
 z = M(:,3);
-
 
 con = [1 2 3 4;
     5 6 7 8;
@@ -210,9 +207,7 @@ for q = 1:6
     h(q).FaceColor = c(q,:);
 end
 
-UpdateRotations(R, );
-
-
+UpdateRotations(R, handles);
 
 % - Updates all the rotation parameters
 function UpdateRotations(R, handles)
@@ -246,7 +241,12 @@ function push_epaa_Callback(hObject, eventdata, handles)
 % hObject    handle to push_epaa (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
+angle = str2double(get(handles.angle, 'String'));
+vec =  [str2double(get(handles.axisX, 'String'));
+        str2double(get(handles.axisY, 'String'));
+        str2double(get(handles.axisZ, 'String'))];
+rMat = VecAng2rotMat(vec, angle);
+handles.Cube = RedrawCube(rMat, handles);
 
 % --- Executes on button press in push_quat.
 function push_quat_Callback(hObject, eventdata, handles)
@@ -259,12 +259,8 @@ q =  [str2double(get(handles.q_1, 'String'));
       str2double(get(handles.q_3, 'String'));
       str2double(get(handles.q_4, 'String'))];
 if norm(q) ~= 0
-    q = q/norm(q);
-    stoich = [    0, - q(4),  q(3);
-               q(4),      0, -q(2);
-              -q(3),   q(2),     0];
-    rMat = (q(1)^2 - q(2:4)' * q(2:4)) * eye(3) + 2 * (q(2:4) * q(2:4)') + 2 * q(1) * stoich;
-    handles.Cube = RedrawCube(rMat, handles.Cube);
+    rMat = Quat2Mat(q);
+    handles.Cube = RedrawCube(rMat, handles);
 end
 
 function q_1_Callback(hObject, eventdata, handles)
