@@ -237,17 +237,16 @@ function push_quat_Callback(hObject, eventdata, handles)
 % hObject    handle to push_quat (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
-%TODO: Normalize the quaternion (change the input too?)
-q_0 = str2double(get(handles.q_1, 'String'));
-q =  [str2double(get(handles.q_2, 'String'));
+% Normalize the quaternion
+q =  [str2double(get(handles.q_1, 'String'));
+      str2double(get(handles.q_2, 'String'));
       str2double(get(handles.q_3, 'String'));
       str2double(get(handles.q_4, 'String'))];
-stoich = [    0, - q(3),  q(2);
-           q(3),      0, -q(1);
-          -q(2),   q(1),     0];
-rMat = (q_0^2 - q' * q) * eye(3) + 2 * (q * q') + 2 * q_0 * stoich;
-%handles.Cube = DrawCube(rMat);
+q = q/norm(q);
+stoich = [    0, - q(4),  q(3);
+           q(4),      0, -q(2);
+          -q(3),   q(2),     0];
+rMat = (q(1)^2 - q(2:4)' * q(2:4)) * eye(3) + 2 * (q(2:4) * q(2:4)') + 2 * q(1) * stoich;
 handles.Cube = RedrawCube(rMat, handles.Cube);
 
 function q_1_Callback(hObject, eventdata, handles)
