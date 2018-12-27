@@ -227,7 +227,11 @@ function push_rv_Callback(hObject, eventdata, handles)
 % hObject    handle to push_rv (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
+vec =  [str2double(get(handles.v_1, 'String'));
+        str2double(get(handles.v_2, 'String'));
+        str2double(get(handles.v_3, 'String'))];
+R = rotVec2Mat(vec);
+handles.Cube = RedrawCube(R, handles);
 
 % --- Executes on button press in push_ea.
 function push_ea_Callback(hObject, eventdata, handles)
