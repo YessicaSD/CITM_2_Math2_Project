@@ -96,7 +96,7 @@ mousepos=get(handles.axes1,'CurrentPoint');
 xmouse = mousepos(1,1);
 ymouse = mousepos(1,2);
 
-if xmouse > xlim(1) && xmouse < xlim(2) && ymouse > ylim(1) && ymouse < ylim(2)
+if xmouse > xlim(1) && xmouse < xlim(2) && ymouseM > ylim(1) && ymouseM < ylim(2)
 
     set(handles.figure1,'WindowButtonMotionFcn',{@my_MouseMoveFcn,hObject});
 end
@@ -131,14 +131,14 @@ radio = sqrt(2);
             cdVec= (radio* cdVec)/m;
          end
         
-if xmouseM > xlim(1) && xmouseM < xlim(2) && ymouseM > ylim(1) && ymouseM < ylim(2)
+if xmouseM > xlim(1) && xmouseM < xlim(2) && ymouse > ylim(1) && ymouse < ylim(2)
        
-        if(xmouseM^2 + ymouseM^2 < 0.5*radio^2 )
-            zmouse= sqrt(radio^2-xmouseM^2-ymouseM^2);
-            mVec = [xmouseM,ymouseM,zmouse]';
+        if(xmouseM^2 + ymouse^2 < 0.5*radio^2 )
+            zmouse= sqrt(radio^2-xmouseM^2-ymouse^2);
+            mVec = [xmouseM,ymouse,zmouse]';
         end
-         if(xmouseM^2 + ymouseM^2 >= 0.5*radio^2 )
-             mVec= [xmouseM,ymouseM,(radio^2)/(2*sqrt(xmouseM^2+ymouseM^2))]';
+         if(xmouseM^2 + ymouse^2 >= 0.5*radio^2 )
+             mVec= [xmouseM,ymouse,(radio^2)/(2*sqrt(xmouseM^2+ymouse^2))]';
              m=norm(mVec);
             mVec= (radio* mVec)/m;
          end   
