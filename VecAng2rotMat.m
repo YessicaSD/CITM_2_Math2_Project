@@ -4,7 +4,7 @@ function  [RotationMatrix] = VecAng2rotMat(vectorU,angleD)
 % Angle must be in degrees
 n= norm(vectorU);
 if n ==0
-    RotationMatrix= eye(3)
+    RotationMatrix= eye(3);
 else
         if(norm(vectorU)~= 1)
        vectorU = (vectorU/norm(vectorU));
