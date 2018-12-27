@@ -221,15 +221,15 @@ UpdateRotations(R, handles);
 % - Updates all the rotation parameters
 function UpdateRotations(R, handles)
 % Matrix
-set(handles.r_11, 'String', num2str(R(1,1)));
-set(handles.r_12, 'String', num2str(R(1,2)));
-set(handles.r_13, 'String', num2str(R(1,3)));
-set(handles.r_21, 'String', num2str(R(2,1)));
-set(handles.r_22, 'String', num2str(R(2,2)));
-set(handles.r_23, 'String', num2str(R(2,3)));
-set(handles.r_31, 'String', num2str(R(3,1)));
-set(handles.r_32, 'String', num2str(R(3,2)));
-set(handles.r_33, 'String', num2str(R(3,3)));
+set(handles.r_11, 'String', num2str(round(R(1,1), 3)));
+set(handles.r_12, 'String', num2str(round(R(1,2), 3)));
+set(handles.r_13, 'String', num2str(round(R(1,3), 3)));
+set(handles.r_21, 'String', num2str(round(R(2,1), 3)));
+set(handles.r_22, 'String', num2str(round(R(2,2), 3)));
+set(handles.r_23, 'String', num2str(round(R(2,3), 3)));
+set(handles.r_31, 'String', num2str(round(R(3,1), 3)));
+set(handles.r_32, 'String', num2str(round(R(3,2), 3)));
+set(handles.r_33, 'String', num2str(round(R(3,3), 3)));
 
 % Angle and u vector
 [ang,vec]=rotMat2Eaa(R);
