@@ -97,7 +97,6 @@ xmouse = mousepos(1,1);
 ymouse = mousepos(1,2);
 
 if xmouse > xlim(1) && xmouse < xlim(2) && ymouse > ylim(1) && ymouse < ylim(2)
-
     set(handles.figure1,'WindowButtonMotionFcn',{@my_MouseMoveFcn,hObject});
 end
 guidata(hObject,handles)
@@ -210,8 +209,6 @@ end
 
 UpdateRotations(R, handles);
 
-
-
 % - Updates all the rotation parameters
 function UpdateRotations(R, handles)
 % Matrix
@@ -244,7 +241,12 @@ function push_epaa_Callback(hObject, eventdata, handles)
 % hObject    handle to push_epaa (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
+angle = str2double(get(handles.angle, 'String'));
+vec =  [str2double(get(handles.axisX, 'String'));
+        str2double(get(handles.axisY, 'String'));
+        str2double(get(handles.axisZ, 'String'))];
+rMat = VecAng2rotMat(vec, angle);
+handles.Cube = RedrawCube(rMat, handles);
 
 % --- Executes on button press in push_quat.
 function push_quat_Callback(hObject, eventdata, handles)
