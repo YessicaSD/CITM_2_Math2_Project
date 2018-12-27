@@ -223,10 +223,11 @@ set(handles.axisX, 'String', num2str(vec(1)));
 set(handles.axisY, 'String', num2str(vec(2)));
 set(handles.axisZ, 'String', num2str(vec(3)));
 % Rotation Vector
-rotVec = vec*ang;
-set(handles.v_1, 'String', num2str(rotVec(1)));
-set(handles.v_2, 'String', num2str(rotVec(2)));
-set(handles.v_3, 'String', num2str(rotVec(3)));
+
+vec = vec*ang;
+set(handles.v_1, 'String', num2str(vec(1)));
+set(handles.v_2, 'String', num2str(vec(2)));
+set(handles.v_3, 'String', num2str(vec(3)));
 
 %Quaternion 
 
