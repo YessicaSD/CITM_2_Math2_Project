@@ -211,6 +211,34 @@ UpdateRotations(R, handles);
 
 % - Updates all the rotation parameters
 function UpdateRotations(R, handles)
+
+
+% Angle and u vector
+[ang,vec]=rotMat2Eaa(R);
+set(handles.angle, 'String', num2str(ang));
+set(handles.axisX, 'String', num2str(vec(1)));
+set(handles.axisY, 'String', num2str(vec(2)));
+set(handles.axisZ, 'String', num2str(vec(3)));
+% Rotation Vector
+vec = vec*ang;
+set(handles.v_1, 'String', num2str(vec(1)));
+set(handles.v_2, 'String', num2str(vec(2)));
+set(handles.v_3, 'String', num2str(vec(3)));
+%Quaternion 
+q = zeros(4,1);
+q(1)= sqrt(1+trace(R))*0.5;
+q(2)= (R(3,2)-R(2,3))/4*q(1);
+q(3)= (R(1,3)-R(3,1))/4*q(1);
+q(4)= (R(2,1)-R(1,2))/4*q(1);
+set(handles.q_1, 'String', num2str(q(1)));
+set(handles.q_2, 'String', num2str(q(2)));
+set(handles.q_3, 'String', num2str(q(3)));
+set(handles.q_4, 'String', num2str(q(4)));
+%Euler Angles
+[phi,theta,psi] = rotM2eAngles(R);
+set(handles.phi, 'String', num2str(phi));
+set(handles.theta, 'String', num2str(theta));
+set(handles.psi, 'String', num2str(psi));
 % Matrix
 set(handles.r_11, 'String', num2str(R(1,1)));
 set(handles.r_12, 'String', num2str(R(1,2)));
