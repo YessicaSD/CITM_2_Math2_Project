@@ -167,9 +167,9 @@ for q = 1:length(c)
     h(q).FaceColor = c(q,:);
 end
 
-function h = RedrawCube(R,hin)
+function h = RedrawCube(R,handles)
 
-h = hin;
+h = handles.Cube;
 c = 1/255*[255 248 88;
     0 0 0;
     57 183 225;
@@ -210,6 +210,22 @@ for q = 1:6
     h(q).FaceColor = c(q,:);
 end
 
+UpdateRotations(R, );
+
+
+
+% - Updates all the rotation parameters
+function UpdateRotations(R, handles)
+% Matrix
+set(handles.r_11, 'String', num2str(R(1,1)));
+set(handles.r_12, 'String', num2str(R(1,2)));
+set(handles.r_13, 'String', num2str(R(1,3)));
+set(handles.r_21, 'String', num2str(R(2,1)));
+set(handles.r_22, 'String', num2str(R(2,2)));
+set(handles.r_23, 'String', num2str(R(2,3)));
+set(handles.r_31, 'String', num2str(R(3,1)));
+set(handles.r_32, 'String', num2str(R(3,2)));
+set(handles.r_33, 'String', num2str(R(3,3)));
 
 % --- Executes on button press in push_rv.
 function push_rv_Callback(hObject, eventdata, handles)
@@ -242,12 +258,14 @@ q =  [str2double(get(handles.q_1, 'String'));
       str2double(get(handles.q_2, 'String'));
       str2double(get(handles.q_3, 'String'));
       str2double(get(handles.q_4, 'String'))];
-q /= 
-stoich = [    0, - q(4),  q(3);
-           q(4),      0, -q(2);
-          -q(3),   q(2),     0];
-rMat = (q(1)^2 - q(2:4)' * q(2:4)) * eye(3) + 2 * (q(2:4) * q(2:4)') + 2 * q(1) * stoich;
-handles.Cube = RedrawCube(rMat, handles.Cube);
+if norm(q) ~= 0
+    q = q/norm(q);
+    stoich = [    0, - q(4),  q(3);
+               q(4),      0, -q(2);
+              -q(3),   q(2),     0];
+    rMat = (q(1)^2 - q(2:4)' * q(2:4)) * eye(3) + 2 * (q(2:4) * q(2:4)') + 2 * q(1) * stoich;
+    handles.Cube = RedrawCube(rMat, handles.Cube);
+end
 
 function q_1_Callback(hObject, eventdata, handles)
 % hObject    handle to q_1 (see GCBO)
