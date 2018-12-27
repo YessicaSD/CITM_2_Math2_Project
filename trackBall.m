@@ -225,6 +225,7 @@ set(handles.v_1, 'String', num2str(vec(1)));
 set(handles.v_2, 'String', num2str(vec(2)));
 set(handles.v_3, 'String', num2str(vec(3)));
 %Quaternion 
+
 q = zeros(4,1);
 q(1)= sqrt(1+trace(R))*0.5;
 q(2)= (R(3,2)-R(2,3))/4*q(1);
