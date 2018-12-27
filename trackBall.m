@@ -125,6 +125,7 @@ r=1;
 
 
 if xmouse > xlim(1) && xmouse < xlim(2) && ymouse > ylim(1) && ymouse < ylim(2)
+
              %Click down vec 
             cd_X = handles.clickX
              cd_Y = handles.clickY
@@ -155,6 +156,7 @@ if xmouse > xlim(1) && xmouse < xlim(2) && ymouse > ylim(1) && ymouse < ylim(2)
                  Rm = VecAng2rotMat(N,angle);
                  
             handles.Cube = RedrawCube(R*Rm,handles);
+
 end
 guidata(hObject,handles);
 
