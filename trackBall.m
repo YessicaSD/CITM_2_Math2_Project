@@ -22,7 +22,7 @@ function varargout = trackBall(varargin)
 
 % Edit the above text to modify the response to help trackBall
 
-% Last Modified by GUIDE v2.5 27-Dec-2018 14:20:29
+% Last Modified by GUIDE v2.5 27-Dec-2018 19:24:38
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -239,28 +239,28 @@ function push_quat_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 %TODO: Normalize the quaternion (change the input too?)
-q_0 = str2double(get(handles.q_0, 'String'));
-q =  [str2double(get(handles.q_1, 'String'));
-      str2double(get(handles.q_2, 'String'));
-      str2double(get(handles.q_3, 'String'))];
+q_0 = str2double(get(handles.q_1, 'String'));
+q =  [str2double(get(handles.q_2, 'String'));
+      str2double(get(handles.q_3, 'String'));
+      str2double(get(handles.q_4, 'String'))];
 stoich = [    0, - q(3),  q(2);
            q(3),      0, -q(1);
           -q(2),   q(1),     0];
 rMat = (q_0.^ 2 - q' * q) * eye(3) + 2 * (q * q') + 2 * q_0 * stoich;
 handles.Cube = RedrawCube(rMat, handles.Cube);
 
-function q_0_Callback(hObject, eventdata, handles)
-% hObject    handle to q_0 (see GCBO)
+function q_1_Callback(hObject, eventdata, handles)
+% hObject    handle to q_1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: get(hObject,'String') returns contents of q_0 as text
-%        str2double(get(hObject,'String')) returns contents of q_0 as a double
+% Hints: get(hObject,'String') returns contents of q_1 as text
+%        str2double(get(hObject,'String')) returns contents of q_1 as a double
 
 
 % --- Executes during object creation, after setting all properties.
-function q_0_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to q_0 (see GCBO)
+function q_1_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to q_1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
