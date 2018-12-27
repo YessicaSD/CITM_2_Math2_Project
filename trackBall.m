@@ -70,6 +70,10 @@ set(handles.axes1,'xlim',[-3 3],'ylim',[-3 3],'visible','off','color','none');
 % Choose default command line output for trackBall
 handles.output = hObject;
 
+% Custom values
+handles.clickX = 0;
+handles.clickY = 0;
+
 % Update handles structure
 guidata(hObject, handles);
 
@@ -95,10 +99,11 @@ ylim = get(handles.axes1,'ylim');
 mousepos=get(handles.axes1,'CurrentPoint');
 xmouse = mousepos(1,1);
 ymouse = mousepos(1,2);
-
 if xmouse > xlim(1) && xmouse < xlim(2) && ymouse > ylim(1) && ymouse < ylim(2)
     set(handles.figure1,'WindowButtonMotionFcn',{@my_MouseMoveFcn,hObject});
 end
+handles.clickX = xmouse;
+handles.clickY = ymouse;
 guidata(hObject,handles)
 
 function my_MouseReleaseFcn(obj,event,hObject)
@@ -112,8 +117,9 @@ r = norm([1;1;1]);
 xlim = get(handles.axes1,'xlim');
 ylim = get(handles.axes1,'ylim');
 mousepos=get(handles.axes1,'CurrentPoint');
-xmouse = mousepos(1,1)
-ymouse = mousepos(1,2)
+xmouse = mousepos(1,1);
+ymouse = mousepos(1,2);
+
 % if xmouse^2 + ymouse^2 < 0.5 * r^2
 %     
 % end
@@ -251,7 +257,7 @@ elseif R(1,1) > R(2,2) && R(1,1) > R(3,3)
                         0.25 * s ; 
          ( R(1,2) + R(2,1) ) / s ; 
          ( R(1,3) + R(3,1) ) / s ];
- elseif R(2,2) > R(3,3)  
+elseif R(2,2) > R(3,3)  
     s = sqrt(1 + R(2,2) - R(1,1) - R(3,3) ) * 2;
     q = [( R(1,3) - R(3,1) ) / s ; 
          ( R(1,2) + R(2,1) ) / s ; 
