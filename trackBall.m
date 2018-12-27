@@ -58,14 +58,14 @@ set(hObject,'WindowButtonUpFcn',{@my_MouseReleaseFcn,handles.axes1});
 axes(handles.axes1);
 
 handles.Cube=DrawCube(eye(3));
-%%Cubeplot(handles.Cube);
+
 set(handles.axes1,'CameraPosition',...
     [0 0 5],'CameraTarget',...
     [0 0 -5],'CameraUpVector',...
     [0 1 0],'DataAspectRatio',...
     [1 1 1]);
 
-%%set(handles.axes1,'xlim',[-3 3],'ylim',[-3 3],'visible','off','color','none');
+set(handles.axes1,'xlim',[-3 3],'ylim',[-3 3],'visible','off','color','none');
 
 % Choose default command line output for trackBall
 handles.output = hObject;
@@ -113,51 +113,18 @@ handles=guidata(obj);
 xlim = get(handles.axes1,'xlim');
 ylim = get(handles.axes1,'ylim');
 mousepos=get(handles.axes1,'CurrentPoint');
-xmouseM = mousepos(1,1);
-ymouseM = mousepos(1,2);
-radio = sqrt(2);
+xmouse = mousepos(1,1);
+ymouse = mousepos(1,2);
 
- clickDownPos = get(hObject, 'CurrentPoint');
-        cd_X= clickDownPos(1,1);
-        cd_Y= clickDownPos(1,2);
-        
-        if(cd_X^2 + cd_Y^2 < 0.5*radio^2 )
-            cd_Z= sqrt(radio^2-cd_X^2-cd_Y^2);
-            cdVec = [cd_X,cd_Y,cd_Z];
-        end
-         if(cd_X^2 + cd_Y^2 >= 0.5*radio^2 )
-             cdVec= [cd_X,cd_Y,(radio^2)/(2*sqrt(cd_X^2+cd_Y^2))]';
-             m=norm(cdVec);
-            cdVec= (radio* cdVec)/m;
-         end
-        
-if xmouseM > xlim(1) && xmouseM < xlim(2) && ymouseM > ylim(1) && ymouseM < ylim(2)
-       
-        if(xmouseM^2 + ymouseM^2 < 0.5*radio^2 )
-            zmouse= sqrt(radio^2-xmouseM^2-ymouseM^2);
-            mVec = [xmouseM,ymouseM,zmouse]';
-        end
-         if(xmouseM^2 + ymouseM^2 >= 0.5*radio^2 )
-             mVec= [xmouseM,ymouseM,(radio^2)/(2*sqrt(xmouseM^2+ymouseM^2))]';
-             m=norm(mVec);
-            mVec= (radio* mVec)/m;
-         end   
-         
-         N = cross(mVec,cdVec);
-         angle = acosd((mVec'*cdVec)/norm(mVec)*norm(cdVec));
-         R = VecAng2rotMat(N,angle);
-         %%% DO things
+if xmouse > xlim(1) && xmouse < xlim(2) && ymouse > ylim(1) && ymouse < ylim(2)
+
+    %%% DO things
     % use with the proper R matrix to rotate the cube
-    %%R = [1 0 0; 0 -1 0;0 0 -1];
-    RedrawCube(R,handles.Cube);
-    Cubeplot(handles.Cube);
+    R = [1 0 0; 0 -1 0;0 0 -1];
+    handles.Cube = RedrawCube(R,handles.Cube);
+    
 end
 guidata(hObject,handles);
-
-
-function Cubeplot(Cube)
-
-
 
 function h = DrawCube(R)
 
