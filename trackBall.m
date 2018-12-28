@@ -145,7 +145,7 @@ if xmouse > xlim(1) && xmouse < xlim(2) && ymouse > ylim(1) && ymouse < ylim(2)
         mVec= (r* mVec)/m;
     end
     N = cross(mVec,cdVec);
-    angle = acosd((mVec'*cdVec)/(norm(mVec)*norm(cdVec)));
+    angle = -acosd((mVec'*cdVec)/(norm(mVec)*norm(cdVec)));
     Rm = VecAng2rotMat(N,angle);   
     handles.Cube = RedrawCube(Rm,handles);
 end
