@@ -74,6 +74,7 @@ handles.output = hObject;
 handles.clickX = 0;
 handles.clickY = 0;
 handles.prevR = eye(3);
+handles.lastValidR = eye(3);% When the player drags out of the screen, we set the rotation to the last valid rotation
 % Update handles structure
 guidata(hObject, handles);
 
@@ -109,19 +110,28 @@ guidata(hObject,handles)
 function my_MouseReleaseFcn(obj,event,hObject)
 handles=guidata(hObject);
 set(handles.figure1,'WindowButtonMotionFcn','');
-R = Drag(handles);
-handles.prevR = R * handles.prevR;
+[flag, R] = Drag(handles);
+if (flag == 1)
+    handles.prevR = R * handles.prevR;
+else
+    handles.prevR = handles.lastValidR;
+end
 guidata(hObject,handles);
 
 function my_MouseMoveFcn(obj,event,hObject)
 handles=guidata(obj);
-R = Drag(handles);
-handles.Cube = RedrawCubeFromPrevious(R, handles);
+[flag, R] = Drag(handles);
+if (flag == 1)
+    handles.Cube = RedrawCube(R, handles, hObject);
+else
+    % If dragging out of the screen, set it to the last valid rotation
+    handles.prevR = handles.lastValidR;
+end
 guidata(hObject,handles);
 
-function [R, flag] = Drag(handles)
-% flag 0 = inv
-% flag
+function [flag, R] = Drag(handles, hObject)
+% flag 0 = invalid drag (out of the screen)
+% flag 1 = successful drag
 r = norm([1;1;1]);
 xlim = get(handles.axes1,'xlim');
 ylim = get(handles.axes1,'ylim');
@@ -153,8 +163,11 @@ if xmouse > xlim(1) && xmouse < xlim(2) && ymouse > ylim(1) && ymouse < ylim(2)
     N = cross(mVec,cdVec);
     angle = -acosd((mVec'*cdVec)/(norm(mVec)*norm(cdVec)));
     R = VecAng2rotMat(N,angle);
+    handles.lastValidR = R * handles.prevR;
+    flag = 1;
 else
     R = eye(3);
+    flag = 0;
 end
 
 function h = DrawCube(R, handles)
@@ -201,49 +214,7 @@ for q = 1:length(c)
 end
 UpdateRotations(eye(3), handles);
 
-function h = RedrawCube(R,handles)
-
-h = handles.Cube;
-c = 1/255*[255 248 88;
-    0 0 0;
-    57 183 225;
-    57 183 0;
-    255 178 0;
-    255 0 0];
-
-M0 = [ -1  -1   1;   %Node 1
-       -1   1   1;   %Node 2
-        1   1   1;   %Node 3
-        1  -1   1;   %Node 4
-       -1  -1  -1;   %Node 5
-       -1   1  -1;   %Node 6
-        1   1  -1;   %Node 7
-        1  -1  -1];  %Node 8
-
-M = (R*M0')';
-
-x = M(:,1);
-y = M(:,2);
-z = M(:,3);
-
-con = [1 2 3 4;
-    5 6 7 8;
-    4 3 7 8;
-    1 2 6 5;
-    1 4 8 5;
-    2 3 7 6]';
-
-x = reshape(x(con(:)),[4,6]);
-y = reshape(y(con(:)),[4,6]);
-z = reshape(z(con(:)),[4,6]);
-
-for q = 1:6
-    h(q).Vertices = [x(:,q) y(:,q) z(:,q)];
-    h(q).FaceColor = c(q,:);
-end
-UpdateRotations(R, handles);
-
-function h = RedrawCubeFromPrevious(R,handles)
+function h = RedrawCube(R, handles, hObject)
 
 h = handles.Cube;
 c = 1/255*[255 248 88;
@@ -284,6 +255,7 @@ for q = 1:6
     h(q).FaceColor = c(q,:);
 end
 UpdateRotations(R * handles.prevR, handles);
+guidata(hObject,handles);
 
 % - Updates all the rotation parameters
 function UpdateRotations(R, handles)
@@ -332,7 +304,10 @@ vec =  [str2double(get(handles.v_1, 'String'));
         str2double(get(handles.v_2, 'String'));
         str2double(get(handles.v_3, 'String'))];
 R = rotVec2Mat(vec);
-handles.Cube = RedrawCube(R, handles);
+handles.prevR = eye(3);
+handles.Cube = RedrawCube(R, handles, hObject);
+handles.prevR = R * handles.prevR;
+guidata(hObject,handles);
 
 % --- Executes on button press in push_ea.
 function push_ea_Callback(hObject, eventdata, handles)
@@ -343,7 +318,10 @@ phi   = str2double(get(handles.phi,   'String'));
 theta = str2double(get(handles.theta, 'String'));
 psi   = str2double(get(handles.psi,   'String'));
 R = eAngles2rotM(phi, theta, psi);
-handles.Cube = RedrawCube(R, handles);
+handles.prevR = eye(3);
+handles.Cube = RedrawCube(R, handles, hObject);
+handles.prevR = R * handles.prevR;
+guidata(hObject,handles);
 
 % --- Executes on button press in push_epaa.
 function push_epaa_Callback(hObject, eventdata, handles)
@@ -355,7 +333,10 @@ vec =  [str2double(get(handles.axisX, 'String'));
         str2double(get(handles.axisY, 'String'));
         str2double(get(handles.axisZ, 'String'))];
 R = VecAng2rotMat(vec, angle);
-handles.Cube = RedrawCube(R, handles);
+handles.prevR = eye(3);
+handles.Cube = RedrawCube(R, handles, hObject);
+handles.prevR = R * handles.prevR;
+guidata(hObject,handles);
 
 % --- Executes on button press in push_quat.
 function push_quat_Callback(hObject, eventdata, handles)
@@ -369,8 +350,12 @@ q =  [str2double(get(handles.q_1, 'String'));
       str2double(get(handles.q_4, 'String'))];
 if norm(q) ~= 0
     R = Quat2Mat(q);
-    handles.Cube = RedrawCube(R, handles);
+    handles.prevR = eye(3);
+    handles.Cube = RedrawCube(R, handles, hObject);
+    handles.prevR = R * handles.prevR;
+    guidata(hObject,handles);
 end
+
 
 function q_1_Callback(hObject, eventdata, handles)
 % hObject    handle to q_1 (see GCBO)

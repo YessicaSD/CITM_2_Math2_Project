@@ -74,6 +74,7 @@ handles.output = hObject;
 handles.clickX = 0;
 handles.clickY = 0;
 handles.prevR = eye(3);
+handles.lastValidR = eye(3);% When the player drags out of the screen, we set the rotation to the last valid rotation
 % Update handles structure
 guidata(hObject, handles);
 
@@ -109,21 +110,26 @@ guidata(hObject,handles)
 function my_MouseReleaseFcn(obj,event,hObject)
 handles=guidata(hObject);
 set(handles.figure1,'WindowButtonMotionFcn','');
-[flag, R] = Drag(handles);
-handles.prevR = R * handles.prevR;
+[flag, R] = Drag(handles, hObject);
+if (flag == 1)
+    handles.prevR = R * handles.prevR;
+else
+    handles.prevR = handles.lastValidR;
+end
 guidata(hObject,handles);
 
 function my_MouseMoveFcn(obj,event,hObject)
 handles=guidata(obj);
-[flag, R] = Drag(handles);
+[flag, R] = Drag(handles, hObject);
 if (flag == 1)
     handles.Cube = RedrawCube(R, handles);
 else
     % If dragging out of the screen, set it to the last valid rotation
+    handles.prevR = handles.lastValidR;
 end
 guidata(hObject,handles);
 
-function [flag, R] = Drag(handles)
+function [flag, R] = Drag(handles, hObject)
 % flag 0 = invalid drag (out of the screen)
 % flag 1 = successful drag
 r = norm([1;1;1]);
@@ -157,11 +163,14 @@ if xmouse > xlim(1) && xmouse < xlim(2) && ymouse > ylim(1) && ymouse < ylim(2)
     N = cross(mVec,cdVec);
     angle = -acosd((mVec'*cdVec)/(norm(mVec)*norm(cdVec)));
     R = VecAng2rotMat(N,angle);
+    handles.lastValidR = R;
     flag = 1;
+    guidata(hObject,handles);
 else
     R = eye(3);
     flag = 0;
 end
+guidata(hObject,handles);
 
 function h = DrawCube(R, handles)
 
