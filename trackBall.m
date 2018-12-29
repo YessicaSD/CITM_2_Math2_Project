@@ -73,14 +73,6 @@ handles.output = hObject;
 % Custom values
 handles.clickX = 0;
 handles.clickY = 0;
-handles.prevM  = [ -1  -1   1;   %Node 1
-                   -1   1   1;   %Node 2
-                    1   1   1;   %Node 3
-                    1  -1   1;   %Node 4
-                   -1  -1  -1;   %Node 5
-                   -1   1  -1;   %Node 6
-                    1   1  -1;   %Node 7
-                    1  -1  -1];  %Node 8
 handles.prevR = eye(3);
 % Update handles structure
 guidata(hObject, handles);
@@ -117,65 +109,28 @@ guidata(hObject,handles)
 function my_MouseReleaseFcn(obj,event,hObject)
 handles=guidata(hObject);
 set(handles.figure1,'WindowButtonMotionFcn','');
-% Update handles
-r = norm([1;1;1]);
-xlim = get(handles.axes1,'xlim');
-ylim = get(handles.axes1,'ylim');
-mousepos=get(handles.axes1,'CurrentPoint');
-xmouse = mousepos(1,1);
-ymouse = mousepos(1,2);
-%Drag start---------------
-if xmouse > xlim(1) && xmouse < xlim(2) && ymouse > ylim(1) && ymouse < ylim(2) 
-    cd_X = handles.clickX
-    cd_Y = handles.clickY
-    if((cd_X^2 + cd_Y^2) < 0.5*r^2 )
-        cd_Z= sqrt(r^2-cd_X^2-cd_Y^2);
-        cdVec = [cd_X,cd_Y,cd_Z]';
-    end
-    if(cd_X^2 + cd_Y^2 >= 0.5*r^2 )
-        cdVec= [cd_X,cd_Y,(r^2)/(2*sqrt(cd_X^2+cd_Y^2))]';
-        m=norm(cdVec);
-        cdVec= (r* cdVec)/m;
-    end
-    %Move Vec
-    if(xmouse^2 + ymouse^2 < 0.5*r^2 )
-        zmouse= sqrt(r^2-xmouse^2-ymouse^2);
-        mVec = [xmouse,ymouse,zmouse]';
-    end
-    if(xmouse^2 + ymouse^2 >= 0.5*r^2 )
-        mVec= [xmouse,ymouse,(r^2)/(2*sqrt(xmouse^2+ymouse^2))]';
-        m=norm(mVec);
-        mVec= (r* mVec)/m;
-    end
-    N = cross(mVec,cdVec);
-    angle = -acosd((mVec'*cdVec)/(norm(mVec)*norm(cdVec)));
-    Rm = VecAng2rotMat(N,angle);
-end
-% Drag end---------------------
-M0 = [ -1  -1   1;   %Node 1
-       -1   1   1;   %Node 2
-        1   1   1;   %Node 3
-        1  -1   1;   %Node 4
-       -1  -1  -1;   %Node 5
-       -1   1  -1;   %Node 6
-        1   1  -1;   %Node 7
-        1  -1  -1];  %Node 8
-handles.prevR = Rm * handles.prevR;
-handles.prevM = (Rm * handles.prevM')';
+R = Drag(handles);
+handles.prevR = R * handles.prevR;
 guidata(hObject,handles);
 
 function my_MouseMoveFcn(obj,event,hObject)
 handles=guidata(obj);
+R = Drag(handles);
+handles.Cube = RedrawCubeFromPrevious(R, handles);
+guidata(hObject,handles);
+
+function R = Drag(handles)
+% flag 0 = invalid drag (out of the screen)
+% flag 1 = successful drag
 r = norm([1;1;1]);
 xlim = get(handles.axes1,'xlim');
 ylim = get(handles.axes1,'ylim');
 mousepos=get(handles.axes1,'CurrentPoint');
 xmouse = mousepos(1,1);
 ymouse = mousepos(1,2);
-%Drag
 if xmouse > xlim(1) && xmouse < xlim(2) && ymouse > ylim(1) && ymouse < ylim(2) 
-    cd_X = handles.clickX
-    cd_Y = handles.clickY
+    cd_X = handles.clickX;
+    cd_Y = handles.clickY;
     if((cd_X^2 + cd_Y^2) < 0.5*r^2 )
         cd_Z= sqrt(r^2-cd_X^2-cd_Y^2);
         cdVec = [cd_X,cd_Y,cd_Z]';
@@ -197,10 +152,10 @@ if xmouse > xlim(1) && xmouse < xlim(2) && ymouse > ylim(1) && ymouse < ylim(2)
     end
     N = cross(mVec,cdVec);
     angle = -acosd((mVec'*cdVec)/(norm(mVec)*norm(cdVec)));
-    Rm = VecAng2rotMat(N,angle);   
-    handles.Cube = RedrawCubeFromPrevious(Rm,handles);
+    R = VecAng2rotMat(N,angle);
+else
+    R = eye(3);
 end
-guidata(hObject,handles);
 
 function h = DrawCube(R, handles)
 
@@ -256,14 +211,14 @@ c = 1/255*[255 248 88;
     255 178 0;
     255 0 0];
 
-M0 = [    -1  -1 1;   %Node 1
-    -1   1 1;   %Node 2
-    1   1 1;   %Node 3
-    1  -1 1;   %Node 4
-    -1  -1 -1;  %Node 5
-    -1   1 -1;  %Node 6
-    1   1 -1;  %Node 7
-    1  -1 -1]; %Node 8
+M0 = [ -1  -1   1;   %Node 1
+       -1   1   1;   %Node 2
+        1   1   1;   %Node 3
+        1  -1   1;   %Node 4
+       -1  -1  -1;   %Node 5
+       -1   1  -1;   %Node 6
+        1   1  -1;   %Node 7
+        1  -1  -1];  %Node 8
 
 M = (R*M0')';
 
@@ -298,7 +253,16 @@ c = 1/255*[255 248 88;
     255 178 0;
     255 0 0];
 
-M = (R * handles.prevM')';
+M0 = [ -1  -1   1;   %Node 1
+       -1   1   1;   %Node 2
+        1   1   1;   %Node 3
+        1  -1   1;   %Node 4
+       -1  -1  -1;   %Node 5
+       -1   1  -1;   %Node 6
+        1   1  -1;   %Node 7
+        1  -1  -1];  %Node 8
+
+M = (R * handles.prevR * M0')';
 
 x = M(:,1);
 y = M(:,2);
