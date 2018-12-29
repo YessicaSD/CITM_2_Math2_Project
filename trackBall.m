@@ -81,7 +81,7 @@ handles.prevM  = [ -1  -1   1;   %Node 1
                    -1   1  -1;   %Node 6
                     1   1  -1;   %Node 7
                     1  -1  -1];  %Node 8
-
+handles.prevR = eye(3);
 % Update handles structure
 guidata(hObject, handles);
 
@@ -160,6 +160,7 @@ M0 = [ -1  -1   1;   %Node 1
        -1   1  -1;   %Node 6
         1   1  -1;   %Node 7
         1  -1  -1];  %Node 8
+handles.prevR = Rm * handles.prevR;
 handles.prevM = (Rm * handles.prevM')';
 guidata(hObject,handles);
 
@@ -318,7 +319,7 @@ for q = 1:6
     h(q).Vertices = [x(:,q) y(:,q) z(:,q)];
     h(q).FaceColor = c(q,:);
 end
-UpdateRotations(R, handles);
+UpdateRotations(R * handles.prevR, handles);
 
 % - Updates all the rotation parameters
 function UpdateRotations(R, handles)
