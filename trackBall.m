@@ -119,7 +119,7 @@ function my_MouseMoveFcn(obj,event,hObject)
 handles=guidata(obj);
 [flag, R] = Drag(handles);
 if (flag == 1)
-    handles.Cube = RedrawCubeFromPrevious(R, handles);
+    handles.Cube = RedrawCube(R, handles);
 end
 guidata(hObject,handles);
 
@@ -226,48 +226,6 @@ M0 = [ -1  -1   1;   %Node 1
         1   1  -1;   %Node 7
         1  -1  -1];  %Node 8
 
-M = (R*M0')';
-
-x = M(:,1);
-y = M(:,2);
-z = M(:,3);
-
-con = [1 2 3 4;
-    5 6 7 8;
-    4 3 7 8;
-    1 2 6 5;
-    1 4 8 5;
-    2 3 7 6]';
-
-x = reshape(x(con(:)),[4,6]);
-y = reshape(y(con(:)),[4,6]);
-z = reshape(z(con(:)),[4,6]);
-
-for q = 1:6
-    h(q).Vertices = [x(:,q) y(:,q) z(:,q)];
-    h(q).FaceColor = c(q,:);
-end
-UpdateRotations(R, handles);
-
-function h = RedrawCubeFromPrevious(R,handles)
-
-h = handles.Cube;
-c = 1/255*[255 248 88;
-    0 0 0;
-    57 183 225;
-    57 183 0;
-    255 178 0;
-    255 0 0];
-
-M0 = [ -1  -1   1;   %Node 1
-       -1   1   1;   %Node 2
-        1   1   1;   %Node 3
-        1  -1   1;   %Node 4
-       -1  -1  -1;   %Node 5
-       -1   1  -1;   %Node 6
-        1   1  -1;   %Node 7
-        1  -1  -1];  %Node 8
-
 M = (R * handles.prevR * M0')';
 
 x = M(:,1);
@@ -338,6 +296,7 @@ vec =  [str2double(get(handles.v_1, 'String'));
         str2double(get(handles.v_2, 'String'));
         str2double(get(handles.v_3, 'String'))];
 R = rotVec2Mat(vec);
+handles.prevR = eye(3);
 handles.Cube = RedrawCube(R, handles);
 
 % --- Executes on button press in push_ea.
@@ -349,6 +308,7 @@ phi   = str2double(get(handles.phi,   'String'));
 theta = str2double(get(handles.theta, 'String'));
 psi   = str2double(get(handles.psi,   'String'));
 R = eAngles2rotM(phi, theta, psi);
+handles.prevR = eye(3);
 handles.Cube = RedrawCube(R, handles);
 
 % --- Executes on button press in push_epaa.
@@ -361,6 +321,7 @@ vec =  [str2double(get(handles.axisX, 'String'));
         str2double(get(handles.axisY, 'String'));
         str2double(get(handles.axisZ, 'String'))];
 R = VecAng2rotMat(vec, angle);
+handles.prevR = eye(3);
 handles.Cube = RedrawCube(R, handles);
 
 % --- Executes on button press in push_quat.
@@ -375,6 +336,7 @@ q =  [str2double(get(handles.q_1, 'String'));
       str2double(get(handles.q_4, 'String'))];
 if norm(q) ~= 0
     R = Quat2Mat(q);
+    handles.prevR = eye(3);
     handles.Cube = RedrawCube(R, handles);
 end
 
