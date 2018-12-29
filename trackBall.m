@@ -110,9 +110,7 @@ function my_MouseReleaseFcn(obj,event,hObject)
 handles=guidata(hObject);
 set(handles.figure1,'WindowButtonMotionFcn','');
 [flag, R] = Drag(handles);
-if (flag == 1)
-    handles.prevR = R * handles.prevR;
-end
+handles.prevR = R * handles.prevR;
 guidata(hObject,handles);
 
 function my_MouseMoveFcn(obj,event,hObject)
@@ -120,6 +118,8 @@ handles=guidata(obj);
 [flag, R] = Drag(handles);
 if (flag == 1)
     handles.Cube = RedrawCube(R, handles);
+else
+    % If dragging out of the screen, set it to the last valid rotation
 end
 guidata(hObject,handles);
 
@@ -207,7 +207,7 @@ for q = 1:length(c)
 end
 UpdateRotations(eye(3), handles);
 
-function h = RedrawCube(R,handles)
+function h = RedrawCube(R, handles)
 
 h = handles.Cube;
 c = 1/255*[255 248 88;
@@ -298,6 +298,8 @@ vec =  [str2double(get(handles.v_1, 'String'));
 R = rotVec2Mat(vec);
 handles.prevR = eye(3);
 handles.Cube = RedrawCube(R, handles);
+handles.prevR = R * handles.prevR;
+guidata(hObject,handles);
 
 % --- Executes on button press in push_ea.
 function push_ea_Callback(hObject, eventdata, handles)
@@ -310,6 +312,8 @@ psi   = str2double(get(handles.psi,   'String'));
 R = eAngles2rotM(phi, theta, psi);
 handles.prevR = eye(3);
 handles.Cube = RedrawCube(R, handles);
+handles.prevR = R * handles.prevR;
+guidata(hObject,handles);
 
 % --- Executes on button press in push_epaa.
 function push_epaa_Callback(hObject, eventdata, handles)
@@ -323,6 +327,8 @@ vec =  [str2double(get(handles.axisX, 'String'));
 R = VecAng2rotMat(vec, angle);
 handles.prevR = eye(3);
 handles.Cube = RedrawCube(R, handles);
+handles.prevR = R * handles.prevR;
+guidata(hObject,handles);
 
 % --- Executes on button press in push_quat.
 function push_quat_Callback(hObject, eventdata, handles)
@@ -338,7 +344,10 @@ if norm(q) ~= 0
     R = Quat2Mat(q);
     handles.prevR = eye(3);
     handles.Cube = RedrawCube(R, handles);
+    handles.prevR = R * handles.prevR;
+    guidata(hObject,handles);
 end
+
 
 function q_1_Callback(hObject, eventdata, handles)
 % hObject    handle to q_1 (see GCBO)
