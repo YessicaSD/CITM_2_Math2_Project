@@ -109,17 +109,19 @@ guidata(hObject,handles)
 function my_MouseReleaseFcn(obj,event,hObject)
 handles=guidata(hObject);
 set(handles.figure1,'WindowButtonMotionFcn','');
-R = Drag(handles);
-handles.prevR = R * handles.prevR;
+[flag, R] = Drag(handles);
+if (flag == 1)
+    handles.prevR = R * handles.prevR;
+end
 guidata(hObject,handles);
 
 function my_MouseMoveFcn(obj,event,hObject)
 handles=guidata(obj);
-R = Drag(handles);
+[~, R] = Drag(handles);
 handles.Cube = RedrawCubeFromPrevious(R, handles);
 guidata(hObject,handles);
 
-function R = Drag(handles)
+function [flag, R] = Drag(handles)
 % flag 0 = invalid drag (out of the screen)
 % flag 1 = successful drag
 r = norm([1;1;1]);
@@ -153,8 +155,10 @@ if xmouse > xlim(1) && xmouse < xlim(2) && ymouse > ylim(1) && ymouse < ylim(2)
     N = cross(mVec,cdVec);
     angle = -acosd((mVec'*cdVec)/(norm(mVec)*norm(cdVec)));
     R = VecAng2rotMat(N,angle);
+    flag = 1;
 else
     R = eye(3);
+    flag = 0;
 end
 
 function h = DrawCube(R, handles)
