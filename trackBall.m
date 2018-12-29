@@ -117,8 +117,10 @@ guidata(hObject,handles);
 
 function my_MouseMoveFcn(obj,event,hObject)
 handles=guidata(obj);
-[~, R] = Drag(handles);
-handles.Cube = RedrawCubeFromPrevious(R, handles);
+[flag, R] = Drag(handles);
+if (flag == 1)
+    handles.Cube = RedrawCubeFromPrevious(R, handles);
+end
 guidata(hObject,handles);
 
 function [flag, R] = Drag(handles)
