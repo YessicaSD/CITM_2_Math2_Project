@@ -160,7 +160,7 @@ M0 = [ -1  -1   1;   %Node 1
        -1   1  -1;   %Node 6
         1   1  -1;   %Node 7
         1  -1  -1];  %Node 8
-handles.prevM = (Rm * M0')';
+handles.prevM = (Rm * handles.prevM')';
 guidata(hObject,handles);
 
 function my_MouseMoveFcn(obj,event,hObject)
