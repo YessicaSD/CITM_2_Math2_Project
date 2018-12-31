@@ -4,9 +4,9 @@ function [alpha,teta,phi] = rotM2eAngles(matrix)
 teta= -asind(matrix(3,1));
 alpha = atan2d(matrix(3,2)/cosd(teta), matrix(3,3)/cosd(teta));
 phi= atan2d(matrix(2,1)/cosd(teta),matrix(1,1)/cosd(teta));
-if(mod(theta,90)==0)
-alpha=0;
-phi=0;
+if(mod(teta,90)==0)
+    alpha=0;
+    phi=0;
 end
 end
 
